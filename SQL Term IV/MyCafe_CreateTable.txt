@@ -1,0 +1,68 @@
+/*Кофейная компания выращивает, перевозит и продает перекупщикам кофе
+Компания владеет несколькими плантациями в Южной Америке.
+Каждая плантация характеризуется уникальным номером, названием страны, в которой она находится ("Колумбия") и именем управляющего ("Аурелиано Буэндия").
+Кофе упаковывается на плантации в мешки и отправляется партиями в один из южноамериканских портов.
+Каждая плантация поставляет кофе лишь в один порт, но один порт может принимать поставки от нескольких плантаций
+Поставка характеризуется количеством кофе (в тоннах) и датой поставки
+Из южноамериканских портов морем кофе доставляется в европейские порты.
+Доставку из порта в порт осуществляет какой-то корабль, который характеризуется названием (“Титаник”) и грузоподъемностью (в тоннах).
+Считается, что корабль полностью загружается грузом кофе.
+Стоимость перевозки между двумя данными портами на данном корабле фиксирована (в тысячах долларов).
+Датой перевозки считается дата отправления корабля из американского порта (2004-10-22)
+По прибытии в порт назначения весь груз кофе тут же отгружается покупателю.
+Покупатель характеризуется именем ("Нескафе Швейцария") и он всегда приобретает кофе по фиксированной цене (в тысячах долларов за тонну)*/
+
+create table Plantation(
+id int primary key 
+,сountry char(30) not null check(сountry like '[A-Z]%[a-z]%')
+,manager char(30) not null check(manager like '[A-Z]%[a-z]%')
+,portA char(30) not null check(portA like '[A-Z]%[a-z]%')
+)
+
+create table PortA(
+name char(30) primary key check(name like '[A-Z]%[a-z]%')
+)
+
+create table PortE(
+name char(30) primary key check(name like '[A-Z]%[a-z]%')
+)
+
+create table Customer(
+name char(30) primary key check(name like '[A-Z]%[a-z]%')
+,price int not null
+)
+
+create table Ship 
+ name char(30) not null check (name like '[A-Z]%[a-z]%')
+,capacity int not null
+,portA char(30)not null references PortA(name) check (portA like '[A-Z]%[a-z]%')
+,portE char(30) not null references PortE(name) check (portE like '[A-Z]%[a-z]%')
+,cost int not null,
+primary key(name, portA, portE)
+)
+
+create table SupplyA(
+plantation int not null references Plantation(id)
+,portA char(30) not null references PortA(name) check(portA like '[A-Z]%[a-z]%') 
+,amount int not null
+,dateA date not null 
+primary key(plantation, dateA)
+)
+
+create table SupplyE(
+portA  char(30) not null references PortA(name) check(portA like '[A-Z]%[a-z]%')
+,portE char(30) not null references PortE(name) check(portE like '[A-Z]%[a-z]%')
+,amount int not null
+,dateE date not null
+,ship char(30) not null	references Ship(name)
+primary key(dateE, ship)
+)
+
+create table Bookkeeping(
+customer char(30) not null references Customer(name) check(customer like '[A-Z]%[a-z]%')
+,amount int not null
+,dateE date not null references SupplyE(dateE)
+,ship char(30) not null references SupplyE(ship) check(ship like '[A-Z]%[a-z]%')
+primary key(customer, dateE, ship)
+)
+

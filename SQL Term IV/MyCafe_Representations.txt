@@ -1,0 +1,20 @@
+/*Представления
+1. Аналитикам хочется знать "товарооборот" между каждой парой европейских и южноамериканских портов. 
+   Товарооборот -- это суммарный вес перевезенного кофе между двумя портами.
+   Напишите им простенькое представление, показывающее эти цифры.
+
+2. Тем же аналитикам для каждого европейского порта хочется знать распределение доставленного в него кофе по покупателям.
+   Что-то в духе "50% кофе, доставленного в Гамбург, покупает "Чибо", 25% "Нескафе" и 25% "Якобс". 
+   В Марселе 70% покупает "Нескафе", а "Чибо" и "Якобс" по 15%.
+*/
+
+create view CommodityTurnover
+as select portA, portE, sum(amount) as CommodityTurnover
+from SupplyE
+group by portA, portE
+
+create view Вistribution
+as select portE, customer, cast(sum(Bookkeeping.amount)as float)*100/sum(SupplyE.amount)   as Вistribution
+from Bookkeeping full join SupplyE
+on Bookkeeping.ship=SupplyE.ship and Bookkeeping.dateE=SupplyE.dateE
+group by portE, customer
