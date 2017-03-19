@@ -1,8 +1,0 @@
-declare @choosenCustomer char(30)
-, @choosenShip char(30)
-
-execute ChooseCustomer Salvador, 1400, Coffee1, Coffee2, Rotterdam, Marseilles, @choosenCustomer output, @choosenShip output
-
-select @choosenCustomer, @choosenShip
-
-
